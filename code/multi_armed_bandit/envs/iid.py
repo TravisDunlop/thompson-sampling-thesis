@@ -10,6 +10,9 @@ class MAB_iid(gym.Env):
     self.arms, self.num_steps, self.current_step = None, None, None
     self.is_inialized = False
 
+  def get_name(self):
+    return 'iid'
+
   def step(self, action):
     if not self.is_inialized: raise Exception('environment not initialized: please call env.reset()')
     #observation

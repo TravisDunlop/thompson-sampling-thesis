@@ -19,5 +19,8 @@ class Policy:
 
 class Random(Policy):
     '''choose action at random'''
+    def get_name(self):
+        return 'random'
+
     def act(self):
         return self.action_space.sample()
