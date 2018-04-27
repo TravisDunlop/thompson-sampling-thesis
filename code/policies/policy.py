@@ -1,9 +1,13 @@
-
-
 class Policy:
     '''Generic Policy definition'''
     def __init__(self):
-        self.action_space = None
+        pass
+
+    def reset(self, env):
+        self.action_space = env.action_space
+        pass
+
+    def get_name(self):
         pass
 
     def update(self, action, reward):
@@ -11,11 +15,6 @@ class Policy:
 
     def act(self):
         pass
-
-    def reset(self, env):
-        self.action_space = env.action_space
-        pass
-
 
 class Random(Policy):
     '''choose action at random'''

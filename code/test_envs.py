@@ -1,7 +1,8 @@
 import gym
-import multi_armed_bandit
-from multi_armed_bandit import policy
+import environments
+import policies
 import pandas as pd
+import numpy as np
 
 def test_policy(env, pol, num_steps, num_episodes, results):
     '''Takes python gym style environment and tests
@@ -20,22 +21,30 @@ def test_policy(env, pol, num_steps, num_episodes, results):
             observation, reward, done, info = env.step(action)
             pol.update(action, reward)
 
-        results.append([env.get_name(), pol.get_name(), num_arms, num_steps, total_reward])
+        results.append([env.get_name(), pol.get_name(), num_arms, num_steps, total_reward / num_steps])
+
+###
+# TESTING
 
 
+###
 path = r'/Users/travisdunlop/Documents/thompson-sampling-thesis/'
 num_arms, num_episodes = 5, 100
 
-env = gym.make('MAB-iid-v0')
-pol = policy.Random()
+environments = ['MAB-iid-v0']
+policies = [policies.policy.Random(), policies.MAB.ThompsonSampling()]
+steps = np.random.randint(1, 1000, 1000)
 
 results = []
 
-for num_steps in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:
-    test_policy(env, pol, num_steps, num_episodes, results)
+for environment in environments:
+    env = gym.make(environment)
+    for pol in policies:
+        for num_steps in steps:
+            test_policy(env, pol, num_steps, 1, results)
 
-results_df = pd.DataFrame(results, columns = ['environment', 'policy', 'num_arms', 'num_steps', 'total_reward'])
+results_df = pd.DataFrame(results, columns = ['environment', 'policy', 'arms', 'steps', 'reward_per_step'])
 
-results_df.head()
+results_df.sample(5)
 
-results_df.to_csv(path + 'code/data/results.csv', index = False)
+results_df.to_csv(path + 'data/results.csv', index = False)
