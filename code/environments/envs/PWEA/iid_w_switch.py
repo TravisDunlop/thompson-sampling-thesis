@@ -3,34 +3,32 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
 
-class PWEA_iid(gym.Env):
-  '''Prediction with Expert Advice, as described in Prediction Learning and
-    Games (Cesa-Bianchi, Lugosi 2006).  Experts have some pre-specified bias
-    and varying levels of gaussian noise.  Policy should learn which experts
-    to weight heavier in making predictions '''
+class PWEA_iid_w_switch(gym.Env):
+  '''Prediction with Expert Advice - one expert is always right, at one point
+     which expert is right switches'''
   metadata = {'render.modes': ['human']}
 
   def __init__(self):
-    self.num_experts, self.num_steps, self.current_step = None, None, None
-    self.is_inialized = False
+    self.is_initalized = False
 
   def get_name(self):
-    return 'PWEA-iid'
+    return 'PWEA-iid-w-switch'
 
   def step(self, action):
-    if not self.is_inialized: raise Exception('environment not initialized: please call env.reset()')
+    if not self.is_initalized: raise Exception('environment not initialized: please call env.reset()')
     #state
     self.prev_y = self.y
     self.y = np.random.uniform()
 
     #observation
-    #! noise = np.random.normal(size = self.num_experts)
-    #! curr_advice = self.a * y + (1 - self.a) * noise
     curr_advice = np.random.uniform(size = self.num_experts)
-    curr_advice[0] = self.y
+    if self.current_step < self.switch_step:
+        curr_advice[self.first_expert] = self.y
+    else:
+        curr_advice[self.second_expert] = self.y
     observation = (self.prev_y, curr_advice)
 
-    #reward
+    #cost
     cost = float(self.cost_function(self.prev_y, action))
 
     #done
@@ -45,12 +43,15 @@ class PWEA_iid(gym.Env):
     return observation, cost, done, info
 
   def reset(self, num_experts = 10, num_steps = 100):
-      self.is_inialized = True
+      self.is_initalized = True
       self.current_step = 0
       self.num_experts = num_experts
       self.num_steps = num_steps
 
-      #! self.a = np.random.uniform(size = num_experts)
+      self.first_expert = np.random.randint(num_experts)
+      self.second_expert = np.random.randint(num_experts)
+
+      self.switch_step = int(num_steps / 2)
 
       self.y, self.prev_y = 0, 0
 

@@ -10,7 +10,7 @@ class Policy:
     def get_name(self):
         pass
 
-    def update(self, action, reward):
+    def update(self, **kwargs):
         pass
 
     def act(self):
@@ -21,5 +21,8 @@ class Random(Policy):
     def get_name(self):
         return 'random'
 
-    def act(self):
+    def act(self, observation = None):
         return self.action_space.sample()
+
+    def update(self, observation = None):
+        pass
