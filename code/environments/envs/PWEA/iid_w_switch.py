@@ -50,6 +50,8 @@ class PWEA_iid_w_switch(gym.Env):
 
       self.first_expert = np.random.randint(num_experts)
       self.second_expert = np.random.randint(num_experts)
+      while self.first_expert == self.second_expert:
+          self.second_expert = np.random.randint(num_experts)
 
       self.switch_step = int(num_steps / 2)
 

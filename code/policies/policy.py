@@ -24,5 +24,5 @@ class Random(Policy):
     def act(self, observation = None):
         return self.action_space.sample()
 
-    def update(self, observation = None):
+    def update(self, observation = None, cost = 0):
         pass

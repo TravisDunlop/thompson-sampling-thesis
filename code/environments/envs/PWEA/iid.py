@@ -24,8 +24,6 @@ class PWEA_iid(gym.Env):
     self.y = np.random.uniform()
 
     #observation
-    #! noise = np.random.normal(size = self.num_experts)
-    #! curr_advice = self.a * y + (1 - self.a) * noise
     curr_advice = np.random.uniform(size = self.num_experts)
     curr_advice[0] = self.y
     observation = (self.prev_y, curr_advice)

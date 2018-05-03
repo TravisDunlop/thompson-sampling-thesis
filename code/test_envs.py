@@ -21,7 +21,7 @@ def test_policy(env, pol, num_episodes, results, reset_kwargs):
             total_cost += cost
 
             observation, cost, done, info = env.step(action)
-            pol.update(observation)
+            pol.update(observation, cost)
 
         result = [env.get_name(), pol.get_name()]
         for key in keys: result.append(reset_kwargs[key])
@@ -32,12 +32,21 @@ def test_policy(env, pol, num_episodes, results, reset_kwargs):
 ###
 # TESTING
 
+
+
 ###
 path = r'/Users/travisdunlop/Documents/thompson-sampling-thesis/'
 num_experts = 10
-environments = ['PWEA-iid-v0', 'PWEA-iid-w-switch-v0']
-pols = [policies.policy.Random(), policies.PWEA.Exponential('PLG_2_2'), policies.PWEA.Exponential('PLG_2_3')]
-
+environments = ['PWEA-iid-v0', 'PWEA-iid-w-switch-v0', 'PWEA-markov-v0']
+pols = []
+pols += [policies.policy.Random()]
+pols += [policies.PWEA.ThompsonSampling()]
+pols += [policies.PWEA.Exponential('PLG 2.2'), policies.PWEA.Exponential('PLG 2.3')]
+pols += [policies.PWEA.Exponential('equation 13')]
+pols += [policies.PWEA.FPL('uniform')]
+pols += [policies.PWEA.FPL('exponential 2.2'), policies.PWEA.FPL('exponential 2.3')]
+#pols += [policies.PWEA.FPL('random walk')]
+#policies.PWEA.FPL('dropout')]
 steps = np.random.randint(1, 1000, 1000)
 
 results = []
