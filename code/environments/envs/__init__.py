@@ -15,3 +15,6 @@ register(
 register(
     id='PWEA-markov-v0',
     entry_point='environments.envs.PWEA.markov:PWEA_markov')
+register(
+    id='PWEA-predetermined-v0',
+    entry_point='environments.envs.PWEA.pathological:PWEA_predetermined')

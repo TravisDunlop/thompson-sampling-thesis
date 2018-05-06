@@ -138,7 +138,7 @@ class ThompsonSampling(Policy):
     def get_name(self):
         return 'thompson sampling'
 
-    def update(self, observation, cost):
+    def update(self, advice, observation):
         if observation is None: return
 
         prev_y = observation[0]
