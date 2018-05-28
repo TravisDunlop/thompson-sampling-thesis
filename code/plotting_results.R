@@ -1,21 +1,28 @@
+library(data.table)
 library(ggplot2)
 library(plotly)
 packageVersion(plotly)
 
-path = '/Users/travisdunlop/Documents/thompson-sampling-thesis/'
+folder = '/Users/travis/Documents/Education/Barcelona GSE/thesis/thompson-sampling-thesis/'
 
-results = read.csv(paste0(path, 'data/results.csv'))
+files = list.files(paste0(folder, 'data'), pattern="*.csv", full.names = T)
 
-results = results[results$cost_per_step != 0,]
+results <- do.call(rbind, lapply(files, fread))
 
-p <- ggplot(results, aes(steps, cost_per_step, col = policy)) + 
+results = results[results$regret_per_step != 0,]
+
+p <- ggplot(results, aes(steps, regret_per_step, col = policy)) + 
   geom_point(alpha = 0.25) +
   #geom_smooth(method="loess", se = FALSE) +
-  facet_wrap(~ environment, ncol = 2) +
-  coord_cartesian(ylim = c(0, 1)) 
+  facet_wrap(~ environment, ncol = 2) 
+  #coord_cartesian(ylim = c(0, 1)) 
+
+print(p)
 
 pltly <- ggplotly(p)
 
-htmlwidgets::saveWidget(as_widget(pltly), paste0(path, 'images/results.html'))
+htmlwidgets::saveWidget(as_widget(pltly), paste0(folder, 'images/results.html'))
 
 results[sample(nrow(results), 10),]
+
+

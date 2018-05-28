@@ -17,4 +17,10 @@ register(
     entry_point='environments.envs.PWEA.markov:PWEA_markov')
 register(
     id='PWEA-predetermined-v0',
-    entry_point='environments.envs.PWEA.pathological:PWEA_predetermined')
+    entry_point='environments.envs.PWEA.predetermined:PWEA_predetermined')
+register(
+    id='Adversarial-thompson-sampling-v0',
+    entry_point='environments.envs.adversarial.thompsonsampling:Adversarial_ThompsonSampling')
+register(
+    id='Adversarial-predetermined-no-truth-v0',
+    entry_point='environments.envs.adversarial.predetermined:Predetermined_No_Truth')

@@ -10,96 +10,71 @@ import environments
 import policies
 from util import test_policy
 
-population_size = 100
-num_generations = 100
+population_size = 200
+num_generations = 10000
+num_experts = 2
 num_steps = 10
-mutation_var = 0.01
+mutation_var = 1
+percent_to_cut = 0.5
+
+def make_children(population, mutation_var):
+    num_children = len(population['expert_advice'])
+    population['expert_advice'] += [mutate(a, mutation_var) for a in population['expert_advice']]
+    population['truth'] += [mutate(a, mutation_var) for a in population['truth']]
+    population['regret_per_step'] += [[] for _ in range(num_children)]
+
+def mutate(array, mutation_var):
+    array = array.copy()
+    mutation = np.random.normal(size = array.shape, scale = mutation_var)
+    array += mutation
+    array = array.clip(0, 1)
+    array = (2 * array).round() / 2
+    return array
+
+def sort_population(population, percent_to_cut = 0.5):
+    cutoff = round(len(population['expert_advice']) * percent_to_cut)
+    avg_regret_per_step = np.array([np.mean(r) for r in population['regret_per_step']])
+    sort_index = np.argsort(-avg_regret_per_step).tolist()
+
+    for key in population.keys():
+        population[key] = [population[key][i] for i in sort_index[:cutoff]]
+
+def fitness_individual(env, pol, population, individual):
+    advice = population['expert_advice'][individual]
+    y = population['truth'][individual]
+    reset_kwargs = {'expert_advice' : advice, 'truth' : y}
+    results = []
+    test_policy(env, pol, 2, results, reset_kwargs)
+    regret_per_step = [result[4] for result in results]
+    population['regret_per_step'][individual] += regret_per_step
+
+def fitness_population(env, pol, population):
+
+    #test fitness - update loss estimates
+    population_size = len(population['expert_advice'])
+    for individual in range(population_size):
+        fitness_individual(env, pol, population, individual)
 
 #initialize population
 env = gym.make('PWEA-predetermined-v0')
-pol = policies.PWEA.ThompsonSampling()
-population = {'advice' = [], 'y' = [], 'costs' = [], 'mean_cost' = []}
+pol = policies.ThompsonSampling()
+
+expert_advice = [np.random.uniform(size = (num_experts, num_steps)) for _ in range(population_size)]
+truth = [np.random.uniform(size = num_steps) for _ in range(population_size)]
+regret_per_step = [[] for _ in range(population_size)]
+
+population = {'expert_advice' : expert_advice, 'truth' : truth, 'regret_per_step' : regret_per_step}
 
 for generation in range(num_generations):
     #test fitness
     fitness_population(env, pol, population)
 
     #kick out bottom 1/2
+    sort_population(population, percent_to_cut)
 
-    #recombine top 1/4
+    #perturb top 1/2
+    make_children(population, mutation_var)
 
-    #perturb top 1/4
-
-
-def fitness_individual(env, pol, population, individual):
-    advice = population['advice'][individual]
-    y = population['y'][individual]
-    reset_kwargs = {'advice' : advice, 'y' : y}
-    results = []
-    test_policy(env, pol, 2, results, reset_kwargs)
-    losses = [result[4] for result in results]
-    loss = np.mean(losses)
-
-    population['loss'][individual] = loss
-
-def fitness_population(env, pol, population):
-
-    #test fitness - update loss estimates
-    population_size = len(population['advice'])
-    for individual in range(population_size):
-        test_individual(env, pol, population, individual)
-
-    #reorder population by decreasing fitness
-
-
-
-expert_advice = np.array((np.random.uniform(size = num_steps), np.random.uniform(size = num_steps)))
-truth = np.random.uniform(size = num_steps)
-
-advice.shape
-
-expert_advice
-
-truth
-
-expert_cost = env.cost_function(expert_advice, truth)
-best_expert = expert_cost.min(axis = 1).argmin()
-
-best_expert_cost = expert_cost[best_expert, :]
-
-expert_regret = expert_cost - best_expert_cost
-
-
-reset_kwargs = {'advice' : advice, 'y' : y}
-
-s = [1, 6, 4, 5]
-
-
-np.mean([1, 0])
-
-results = []
-test_policy(env, pol, 1, results, reset_kwargs)
-
-_, _, advice, y, loss = results[0]
-
-
-total_cost, cost = 0, 0
-env.reset(**reset_kwargs)
-pol.reset(env)
-done = False
-observation = None
-
-###
-while not done:
-    action = pol.act(observation)
-    total_cost += cost
-
-    observation, cost, done, info = env.step(action)
-    pol.update(observation, cost)
-
-result = [env.get_name(), pol.get_name()]
-for key in keys: result.append(reset_kwargs[key])
-result.append(total_cost / num_steps)
-####
-
-help(env.step)
+population['expert_advice'][0]
+population['truth'][0]
+population['regret_per_step'][1]

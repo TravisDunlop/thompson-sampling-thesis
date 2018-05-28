@@ -2,65 +2,33 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
+import sys
+sys.path.append('code')
+import environments
+from environments.envs.PWEA.abstract import PWEA_Env
 
-class PWEA_iid_w_switch(gym.Env):
+class PWEA_iid_w_switch(PWEA_Env):
   '''Prediction with Expert Advice - one expert is always right, at one point
      which expert is right switches'''
-  metadata = {'render.modes': ['human']}
-
-  def __init__(self):
-    self.is_initalized = False
 
   def get_name(self):
     return 'PWEA-iid-w-switch'
 
-  def step(self, action):
-    if not self.is_initalized: raise Exception('environment not initialized: please call env.reset()')
-    #state
-    self.prev_y = self.y
-    self.y = np.random.uniform()
-
-    #observation
-    curr_advice = np.random.uniform(size = self.num_experts)
-    if self.current_step < self.switch_step:
-        curr_advice[self.first_expert] = self.y
-    else:
-        curr_advice[self.second_expert] = self.y
-    observation = (self.prev_y, curr_advice)
-
-    #cost
-    cost = float(self.cost_function(self.prev_y, action))
-
-    #done
-    self.current_step += 1
-    if self.current_step == self.num_steps:
-        done = True
-    else:
-        done = False
-
-    #info
-    info = ''
-    return observation, cost, done, info
-
   def reset(self, num_experts = 10, num_steps = 100):
-      self.is_initalized = True
-      self.current_step = 0
       self.num_experts = num_experts
       self.num_steps = num_steps
 
-      self.first_expert = np.random.randint(num_experts)
-      self.second_expert = np.random.randint(num_experts)
-      while self.first_expert == self.second_expert:
-          self.second_expert = np.random.randint(num_experts)
+      self.truth = np.random.uniform(size = num_steps)
+      self.expert_advice = np.random.uniform(size = (num_experts, num_steps))
 
-      self.switch_step = int(num_steps / 2)
+      first_expert = np.random.randint(num_experts)
+      second_expert = np.random.randint(num_experts)
+      while first_expert == second_expert:
+          second_expert = np.random.randint(num_experts)
 
-      self.y, self.prev_y = 0, 0
+      switch_step = int(num_steps / 2)
 
-      self.action_space = spaces.Box(low = 0, high = 1, shape = (1,), dtype = np.float32)
+      self.expert_advice[first_expert, :switch_step] = self.truth[:switch_step]
+      self.expert_advice[second_expert, switch_step:] = self.truth[switch_step:]
 
-  def render(self, mode='human', close=False):
-    ...
-
-  def cost_function(self, x, y):
-      return (x - y) ** 2
+      super().reset()

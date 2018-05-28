@@ -1,4 +1,5 @@
 
-from .policy import Policy
-from .PWEA import Exponential
-from .MAB import ThompsonSampling
+from .policy import *
+from .PWEA.exponential import *
+from .PWEA.thompsonsampling import *
+from .PWEA.followtheperturbedleader import *

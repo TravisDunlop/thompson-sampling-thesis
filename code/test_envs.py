@@ -3,7 +3,7 @@ import sys
 sys.path.append('code')
 import environments
 import policies
-from util import test_policy
+from util import test_policy, test_and_save, save_list
 import pandas as pd
 import numpy as np
 
@@ -13,31 +13,45 @@ import numpy as np
 
 
 ###
-path = r'/Users/travisdunlop/Documents/thompson-sampling-thesis/'
+folder = r'/Users/travis/Documents/Education/Barcelona GSE/thesis/thompson-sampling-thesis/data/'
 num_experts = 10
-environments = ['PWEA-iid-v0', 'PWEA-iid-w-switch-v0', 'PWEA-markov-v0']
-pols = []
-pols += [policies.policy.Random()]
-pols += [policies.PWEA.ThompsonSampling()]
-pols += [policies.PWEA.Exponential('PLG 2.2'), policies.PWEA.Exponential('PLG 2.3')]
-pols += [policies.PWEA.Exponential('equation 13')]
-pols += [policies.PWEA.FPL('uniform')]
-pols += [policies.PWEA.FPL('exponential 2.2'), policies.PWEA.FPL('exponential 2.3')]
-#pols += [policies.PWEA.FPL('random walk')]
-#policies.PWEA.FPL('dropout')]
-steps = np.random.randint(1, 1000, 1000)
+min_step = 10
+max_step = 1000
+num_simulations = 1000
 
-results = []
+environments = ['PWEA-iid-v0', 'PWEA-iid-w-switch-v0']
+environments += ['PWEA-markov-v0']
+pols = []
+#pols += [policies.policy.Random()]
+#pols += [policies.ThompsonSampling()]
+pols += [policies.Exponential('PLG 2.2'), policies.Exponential('PLG 2.3')]
+#pols += [policies.Exponential('equation 13')]
+#pols += [policies.Exponential('AdaHedge')]
+#pols += [policies.FPL('uniform')]
+#pols += [policies.FPL('exponential 2.2'), policies.FPL('exponential 2.3')]
+#pols += [policies.FPL('random walk')]
+#pols += [policies.FPL('dropout')]
 
 for environment in environments:
     env = gym.make(environment)
     for pol in pols:
-        for num_steps in steps:
-            reset_kwargs = { 'num_experts' : num_experts, 'num_steps' : num_steps }
-            test_policy(env, pol, 1, results, reset_kwargs)
+        test_and_save(env, pol, folder, num_experts, min_step, max_step, num_simulations)
 
-results_df = pd.DataFrame(results, columns = ['environment', 'policy', 'experts', 'steps', 'cost_per_step'])
+#testing markov with different dirichlet_factor
+num_steps = 200
+num_experts = 10
+min_dirichlet_factor = 1 / num_experts
+max_dirichlet_factor = 100
+dirichlet_factors = steps = np.random.uniform(min_dirichlet_factor, max_dirichlet_factor, 1000)
 
-results_df.sample(5)
+env = gym.make('PWEA-markov-v0')
+results = []
 
-results_df.to_csv(path + 'data/results.csv', index = False)
+for pol in pols:
+    for dirichlet_factor in dirichlet_factors:
+        reset_kwargs = { 'num_experts' : num_experts, 'num_steps' : num_steps, 'dirichlet_factor' : dirichlet_factor }
+        test_policy(env, pol, 1, results, reset_kwargs)
+
+
+file_name = folder + 'testing dirichlet factors/results.csv'
+save_list(results, file_name)
