@@ -1,3 +1,8 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{1}
+
+\bibitem{PLG}
+Nicolo Cesa-Bianchi and Gabor Lugosi.
+\newblock {\em Prediction, Learning, and Games}.
+\newblock Cambridge University Press, New York, NY, USA, 2006.
 
 \end{thebibliography}

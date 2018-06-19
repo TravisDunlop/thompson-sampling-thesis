@@ -6,8 +6,6 @@ import environments
 import policies
 import pickle
 
-import numpy as np
-
 def array2string(array):
     if isinstance(array, list): array = np.array(array)
     return np.array2string(array, precision = 3, separator = ',').replace('\n', '')
@@ -139,6 +137,9 @@ def save():
                 population.write(f_short, f_long)
 
 #initialize population
+
+with open('data/adversarial evolutionary/populations.pickle', 'rb') as f:
+    populations = pickle.load(f)
 #populations = [Population(e,s, **kwargs) for e in num_experts_range for s in num_steps_range]
 
 for generation in range(num_generations):

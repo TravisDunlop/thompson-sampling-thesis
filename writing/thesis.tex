@@ -3,34 +3,96 @@
 \usepackage{lipsum}
 \usepackage{url}
 \usepackage[nochapters]{classicthesis} % nochapters
+\usepackage{amsmath}
+
+
+% for algorithm description
+\usepackage{alltt}
+% for algorithm description in a box
+\usepackage{boxedminipage}
+
+\DeclareMathOperator*{\argmin}{argmin}
 
 \begin{document}
 	\pagestyle{plain}
-	\title{\rmfamily\normalfont\spacedallcaps{Thompson Sampling in non-Stochastic Environments}}
-	\author{\spacedlowsmallcaps{travis dunlop}}
-	\date{} % no date
+	\title{\rmfamily\normalfont Thompson Sampling \\in Adversarial Environments}
+	\author{Travis Dunlop }
+	\date{July 1, 2018\\ $\,$ 
+			 \\Advisors: Gergely Neu, Mihalis Markakis, Gabor Lugosi} 
 	
 	\maketitle
 	
 	\begin{abstract}
-		\noindent\lipsum[1] Just a test.\footnote{This is a footnote.}
+		Thompson Sampling is an increasingly popular algorithm for decision making in online optimization.
 	\end{abstract}
 	
-	\tableofcontents
+	\section{Introduction}
+		William R. Thompson first proposed Thompson Sampling in 1933 as a strategy to estimate treatment effects while minimizing negative outcomes.  It has since become a popular algorithm to balance the tradeoff between \textit{exploration} and \textit{exploitation} in repeated games.  And, for good reason - Thompson sampling performs empirically quite well.  In particular, when the losses are \textit{stochastic} (they come from a fixed distribution over time),  Thompson Sampling has guarantees on it's worst case performance.  However, what is not well understood, is the performance in \textit{adversarial} environments.  It is this question that we try to illuminate.
+
+	\section{Problem Setup}
 	
-	\section{A Section}
-	\finalVersionString \lipsum[1]
-	\subsection{A Subsection}
-	\lipsum[1]
-	\subsection{A Subsection}
+	We consider a version of the 'prediction with expert advice' framework from the textbook \textit{Prediction, Learning, and Games} \cite{PLG}.  In this setup, there is a forecaster that plays a repeated game against their adversary - the environment.  
 	
-	\section{A Section}
-	\lipsum[1]
+	First, the environment choses a loss for each action and time step $\ell_{i, t}$.  Where $i \in \{1, 2, ... N\}$ corresponds with the possible actions  of the forecaster and $t \in \{1, 2, ..., T\}$ is the timestep.  Then, the forecaster plays the game.  For each timestep $t$: the forecaster chooses an action $a_t \in \{1, ..., N\}$, and incurrs loss $\ell_{a_t, t}$.  The losses for all actions are then revealed to the forecaster. 
+	
+	The forecaster tries to learn from the losses it's seen to choose good actions and the environment tries to trick the forecaster into incurring high loss.  This setup can be thought of as a mulit-armed bandit problem with full information. \\
+	
+	\noindent \begin{minipage}{\textwidth}
+	\centerline{\textbf{Problem Framework}} 
+	\noindent\begin{boxedminipage}{\textwidth}
+		\textbf{Parameters}: Number of actions: $N$, Number of timesteps: $T$ \\
+		Environment chooses losses $\ell_{i, t} \in [0, 1]$ for $i \in \{1, 2, .., N\}$ \& $t \in \{1, 2, ..., T\} $ \\
+		\textbf{For each timestep} $t = 1, 2, ..., T$
+		\begin{enumerate}
+			\item Forecaster chooses action $a_{t} \in \{1, 2, ..., N\}$
+			\item Environment reveals losses $\ell_{i, t}$ for $i \in \{1, 2, ..., N\}$
+			\item Forecaster suffers loss $\ell_{a_t, t}$
+		\end{enumerate}
+	\end{boxedminipage}
+\end{minipage}
+	\\ $\,$ \\
+	Now, we need some way of scoring the game between the forecaster and environment.  At first glance, a natural choice is the cummulative loss of the forecaster: $\widehat{L} = \sum_{t = 1}^{T} \ell_{a_t, t}$.  However, this gives too much power to the environment.  They could simply maximize loss by choosing $\ell_{i, t} = 1$ for all actions and time steps.
+	
+	A better choice of metric is cummulative regret.  Regret is the difference between the forecasters loss and that of the best fixed action:
+	$$R_T = \widehat{L}_T - L^*_T$$
+	Where $L^* = \min_j \sum_{t = 1}^{T} \ell_{j, t}$ 
+	
+	\section{Thompson Sampling}
+	
+	\centerline{\textbf{Thompson Sampling: Beta-Bernoulli}} 
+	\noindent\begin{boxedminipage}{\textwidth}
+		Set parameters $\alpha_i = 1$ and $\beta_i = 1$ for all $i \in \{1, ..., N\}$\\
+		\textbf{For each timestep} $t = 1, 2, ..., T$
+		\begin{enumerate}
+			\item Sample $\theta_{i, t} \sim \text{Beta}(\alpha_i, \beta_i)$ and choose action $a_t = \argmin_i \theta_{i, t}$
+			\item Observe losses $\ell_{i, t}$ for $i \in \{1, 2, ..., N\}$
+			\item Perform Bernoulli trial for each action: $\widetilde{\ell}_{i, t} \sim Bernoulli(\ell_{i, t})$
+			\item $
+			\begin{aligned}			
+			\text{Update parameters: } \alpha_i &= \alpha_i + \widetilde{\ell}_{i, t} \\
+			\beta_i &= \beta_i + 1 - \widetilde{\ell}_{i, t}
+			\end{aligned}
+			$
+		\end{enumerate}
+	\end{boxedminipage}
+	
+
+	
+	\section{Other Algorithms}
+	
+	\subsection{Follow the Perturbed Leader}
+	
+	\subsection{Exponential Weighted Forecaster}
+	
+	\subsection{Follow the Regularized Leader}
+	
+	\section{Comparison of Algorithms}
+	
+	\section{Evolutionary Strategies}	
+
 	
 	% bib stuff
 	\nocite{*}
-	\addtocontents{toc}{\protect\vspace{\beforebibskip}}
-	\addcontentsline{toc}{section}{\refname}
 	\bibliographystyle{plain}
-	\bibliography{../Bibliography}
+	\bibliography{bibliography}
 \end{document}
