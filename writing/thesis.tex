@@ -23,7 +23,7 @@
 	\maketitle
 	
 	\begin{abstract}
-		Thompson Sampling is an increasingly popular family of algorithms for decision making in online optimization.  And, this is for good reason.  If the loss of each action is independent and identically distributed, the external regret is bounded by $\mathcal{O}()$ (where $N$ is the number of actions and $T$ total time steps) \cite{}. This rivals the performance of state-of-the art follow the perturbed leader algorithms.  However, what is not yet understood is it's performance if the losses are not iid.  In this thesis, we provide empirical evidence that Thompson Sampling has a low bound on regret even if the losses are set by an adversary.  We hypothesize that it's bounded in the order of $\mathcal{O}()$.
+		Thompson Sampling is an increasingly popular family of algorithms for decision making in online optimization.  And, this is for good reason.  If the loss of each action is independent and identically distributed, the external regret is bounded by $\mathcal{O}()$ (where $N$ is the number of actions and $T$ total time steps) \cite{}. This rivals the performance of state-of-the art algorithms.  However, what is not yet understood is it's performance if the losses are not iid.  In this thesis, we provide empirical evidence that Thompson Sampling has a low bound on regret even if the losses are set by an adversary.  We hypothesize that it's bounded in the order of $\mathcal{O}()$.
 	
 	\end{abstract}
 	
@@ -106,7 +106,7 @@
 	
 	\subsection{Follow the Perturbed Leader}
 	
-	The first of these algorithms is based of the idea of 'following the leader'.  That is, choose the action which has the lowest cummulative loss so far.  Unfortunately, it is well known result that in this most naive implementation, one can construct losses such that the regret grows linearly with time.
+	The first of these algorithms is based of the idea of 'following the leader'.  That is, choose the action which has the lowest cummulative loss so far.  However, it is well known result that in this most naive implementation, one can construct losses such that the regret grows linearly with time.
 	
 	To see this imagine two actions with losses (1, 0, 1/2, 0, 1/2, 0, ) (1, 1/2, 0, 1/2, 0, 1/2...).
 	
