@@ -125,27 +125,12 @@ turns_range = np.logspace(1, 2, num = 10).astype('int')
 
 populations = load()
 
+
 while True:
-    print('generation complete: {}'.format(population.curr))
+    print('generation complete: {}'.format(populations[0].curr))
     for population in populations: population.generation()
 
     save(populations)
-
-import os
-os.getcwd()
-
-len(populations)
-
-100 / 166
-
-[len(p.members) for p in populations]
-
-for population in populations:
-    population.sort_and_kill()
-
-#populations[0].members[0].agent is populations[100].members[1].agent
-
-save(populations)
 
 ####
 #Test
