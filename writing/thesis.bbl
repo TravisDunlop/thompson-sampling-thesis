@@ -1,8 +1,33 @@
 \begin{thebibliography}{1}
 
+\bibitem{eq13}
+N.~{Cesa-Bianchi}, Y.~{Mansour}, and G.~{Stoltz}.
+\newblock {Improved Second-Order Bounds for Prediction with Expert Advice}.
+\newblock {\em ArXiv Mathematics e-prints}, February 2006.
+
 \bibitem{PLG}
 Nicolo Cesa-Bianchi and Gabor Lugosi.
 \newblock {\em Prediction, Learning, and Games}.
 \newblock Cambridge University Press, New York, NY, USA, 2006.
+
+\bibitem{adahedge}
+Steven de~Rooij, Tim van Erven, Peter~D. Gr{\"{u}}nwald, and Wouter~M. Koolen.
+\newblock Follow the leader if you can, hedge if you must.
+\newblock {\em CoRR}, abs/1301.0534, 2013.
+
+\bibitem{random_walk}
+Luc Devroye, G{\'{a}}bor Lugosi, and Gergely Neu.
+\newblock Prediction by random-walk perturbation.
+\newblock {\em CoRR}, abs/1302.5797, 2013.
+
+\bibitem{Russo_TS}
+Daniel Russo, Benjamin~Van Roy, Abbas Kazerouni, and Ian Osband.
+\newblock A tutorial on thompson sampling.
+\newblock {\em CoRR}, abs/1707.02038, 2017.
+
+\bibitem{dropout}
+Tim Van~Erven, Wojciech Kot{\l}owski, and Manfred~K Warmuth.
+\newblock Follow the leader with dropout perturbations.
+\newblock In {\em Conference on Learning Theory}, pages 949--974, 2014.
 
 \end{thebibliography}
