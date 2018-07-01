@@ -3,10 +3,9 @@
 \BOOKMARK [1][-]{section.3}{Thompson Sampling}{}% 3
 \BOOKMARK [1][-]{section.4}{Other Algorithms}{}% 4
 \BOOKMARK [2][-]{subsection.4.1}{Follow the Perturbed Leader}{section.4}% 5
-\BOOKMARK [2][-]{subsection.4.2}{Exponential Weighted Forecaster}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.2}{Exponential Weighted Averaging}{section.4}% 6
 \BOOKMARK [2][-]{subsection.4.3}{Comparison of Algorithms}{section.4}% 7
 \BOOKMARK [1][-]{section.5}{Game Theory}{}% 8
 \BOOKMARK [1][-]{section.6}{Evolutionary Strategies}{}% 9
 \BOOKMARK [1][-]{section.7}{Related Work}{}% 10
 \BOOKMARK [1][-]{section.8}{Conclusion}{}% 11
-\BOOKMARK [1][-]{section.9}{Acknowledgement}{}% 12

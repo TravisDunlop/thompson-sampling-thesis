@@ -1,5 +1,10 @@
 \begin{thebibliography}{1}
 
+\bibitem{agrawal}
+Shipra Agrawal and Navin Goyal.
+\newblock Analysis of thompson sampling for the multi-armed bandit problem.
+\newblock {\em CoRR}, abs/1111.1797, 2011.
+
 \bibitem{eq13}
 N.~{Cesa-Bianchi}, Y.~{Mansour}, and G.~{Stoltz}.
 \newblock {Improved Second-Order Bounds for Prediction with Expert Advice}.
@@ -20,10 +25,21 @@ Luc Devroye, G{\'{a}}bor Lugosi, and Gergely Neu.
 \newblock Prediction by random-walk perturbation.
 \newblock {\em CoRR}, abs/1302.5797, 2013.
 
+\bibitem{FPL_TS_Gaussian}
+A.~{Gopalan}.
+\newblock {Thompson Sampling for Online Learning with Linear Experts}.
+\newblock {\em ArXiv e-prints}, November 2013.
+
 \bibitem{Russo_TS}
 Daniel Russo, Benjamin~Van Roy, Abbas Kazerouni, and Ian Osband.
 \newblock A tutorial on thompson sampling.
 \newblock {\em CoRR}, abs/1707.02038, 2017.
+
+\bibitem{original_gangster}
+William~R. Thompson.
+\newblock On the likelihood that one unknown probability exceeds another in
+  view of the evidence of two samples.
+\newblock {\em Biometrika}, 25(3/4):285--294, 1933.
 
 \bibitem{dropout}
 Tim Van~Erven, Wojciech Kot{\l}owski, and Manfred~K Warmuth.
