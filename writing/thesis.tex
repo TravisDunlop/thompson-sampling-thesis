@@ -25,7 +25,7 @@
 	\maketitle
 	
 	\begin{abstract}
-		Thompson Sampling is an increasingly popular family of algorithms for decision making in online optimization.  And, this is for good reason.  If the loss of each action is independent and identically distributed, the external regret is bounded by $\mathcal{O}(\ln T)$ (where $T$ is total time steps) \cite{agrawal}. This rivals the performance of state-of-the art algorithms.  However, what is not yet understood is it's performance if the losses are not iid.  In this thesis, we provide empirical evidence that Thompson Sampling performs about as well as algorithms with tight regret bounds in adversarial environments.  This evidence comes from constant sum game play as well as evolutionary strategies.
+		Thompson Sampling is an increasingly popular family of algorithms for decision making in online optimization.  And, this is for good reason.  If the loss of each action is independent and identically distributed, the external regret is bounded by $\mathcal{O}(\ln T)$ (where $T$ is total time steps) \cite{agrawal}. This rivals the performance of state-of-the art algorithms.  However, what is not yet understood is it's performance if the losses are not iid.  In this thesis, we provide empirical evidence that Thompson Sampling performs as well as algorithms with tight regret bounds in adversarial environments.  This evidence comes from constant sum game play as well as evolutionary strategies.
 	\end{abstract}
 	
 	\section{Introduction}
@@ -182,19 +182,23 @@
 		\item Beta-Bernoulli Thompson Sampling
 		\item Exponential weighted averaging (EWA) - with learning rate $\eta_t = \sqrt{8 (\ln{N})/t}$
 		\item Follow the perturbed leader (FPL) with dropout perturbations -  we say $\widetilde{\ell}_{i, t} = 1$ with probability $(1 - \alpha) \ell_{i, t}$ where $\alpha \in (0, 1)$.  Decisions are made by choosing the lowest cummulative loss of $\widetilde{\ell}_{i, t}$
-	\end{itemize},  and 
+	\end{itemize}
 
 	For each combination of $N, T$, payoff matrix and algorithm we play 100 rounds of the game.  The point plotted is the maximum regret of the row player found in those trials.
 	
+	\pagebreak
+
+	The curves in the plot below are of the form $R_T = a \sqrt{T}$ where $a$ is a constant chosen such that the curve is greater than or equal to all values of regret for that plot and algorithm.  This is to visually compare whether or not the behavior of the maximum regret seen is actually follows this pattern. If the game provides a strong enough of an adversary, $R_T \propto \sqrt{T}$ is the relationship we expect for EWA and FPL given their regret bounds.  Note that since both axes are logarithmic, the line is straight. 
+	
+	For many of the plots, the game does induce this relationship between the regret and the number of turns.  Specifically in all but rock paper scissors and uniform when there are only two arms.  In this case, it seems the game is easily beatable and none of the algorithms incur high regret.  Thompson Sampling 
+	
+	Thompson Sampling 
+
 	\begin{figure}[h!]
-		\makebox[\textwidth][c]{
-			\includegraphics[width=1.5\textwidth]{../images/game_theory/num_turns_by_regret}
-		}
+	\makebox[\textwidth][c]{
+		\includegraphics[width=1.5\textwidth]{../images/game_theory/num_turns_by_regret}
+	}
 	\end{figure}
-
-\pagebreak
-
-There are some nice underlying connections between analyzing regret in 'prediction with expert advice' scenerios and game theory.    << Flesh this out more >>
 
 	
 	\pagebreak
