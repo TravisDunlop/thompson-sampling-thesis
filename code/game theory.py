@@ -9,8 +9,10 @@ import seaborn as sb
 from numpy import log
 
 def play_game(agent_1, agent_2, payoff_matrix, num_turns):
-    agent_1.reset()
-    agent_2.reset()
+    num_actions, _ = payoff_matrix.shape
+
+    agent_1.reset(num_actions)
+    agent_2.reset(num_actions)
 
     #agent 1 loss
     agent_1_loss = 0
@@ -45,8 +47,11 @@ num_turns = 10
 
 payoff_matrix = np.identity(num_actions)
 
-agent_1 = ThompsonSamplingAgent(num_actions)
-agent_2 = ThompsonSamplingAgent(num_actions)
+agent_1 = ThompsonSamplingAgent()
+agent_2 = ThompsonSamplingAgent()
+
+agent_1.reset(num_actions)
+agent_2.reset(num_actions)
 
 play_game(agent_1, agent_2, payoff_matrix, num_turns)
 
@@ -70,9 +75,11 @@ def uniform(num_actions):
     return np.random.uniform(size = (num_actions, num_actions))
 
 ############################################################
-Agents = [ThompsonSamplingAgent, FPLDropout, ExponentialWeightedAverage]
+agents_1 = [ThompsonSamplingAgent(), FPLDropout(), ExponentialWeightedAverage()]
+agents_2 = [ThompsonSamplingAgent(), FPLDropout(), ExponentialWeightedAverage()]
 payoffs = [identity, rock_paper_scissors, uniform]
-actions_range = range(2, 30)
+#actions_range = range(2, 30)
+actions_range = [2, 15, 30]
 turns_range = np.logspace(1, 3, num = 15).astype('int')
 iterations = range(100)
 
@@ -82,22 +89,22 @@ for num_actions in actions_range:
 
     for payoff in payoffs:
         payoff_matrix = payoff(num_actions)
-        for Agent in Agents:
+        for agent_1 in agents_1:
+            for agent_2 in agents_2:
 
-            agent_1 = Agent(num_actions)
-            agent_2 = Agent(num_actions)
-
-            for num_turns in turns_range:
-                for i in iterations:
-                    result = play_game(agent_1, agent_2, payoff_matrix, num_turns)
-                    results.append((num_turns, num_actions, payoff.__name__, \
-                                    agent_1.type(), agent_2.type()) + result)
+                for num_turns in turns_range:
+                    for i in iterations:
+                        result = play_game(agent_1, agent_2, payoff_matrix, num_turns)
+                        results.append((num_turns, num_actions, payoff.__name__, \
+                                        agent_1.type(), agent_2.type()) + result)
 
 cols = ['num_turns', 'num_actions', 'payoff_type', 'agent_1', 'agent_2',
         'loss_1', 'loss_2', 'regret_1', 'regret_2']
 results_df = pd.DataFrame(results, columns = cols)
 
-path = '../../data/game_theory_results.csv'
+# path = '../../data/game_theory_results_.csv'
+
+path = '../data/game_theory_results_dueling.csv'
 
 results_df.to_csv(path, index = False)
 

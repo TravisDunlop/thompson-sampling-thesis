@@ -44,8 +44,8 @@ ggplot(by_turns, aes(num_turns, regret, col = agent_1)) +
        title = 'Constant-Sum Game Results') +
   theme_bw()
 
-ggsave(paste0(folder, 'images/game theory/num_turns_by_regret.png'), 
-       width = 10, height = 5)
+ggsave(paste0(folder, 'images/game_theory/num_turns_by_regret.png'), 
+       width = 10, height = 8)
 
 ########################################################################
 
