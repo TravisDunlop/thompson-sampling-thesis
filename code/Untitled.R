@@ -41,7 +41,11 @@ ggplot(by_turns, aes(num_turns, regret, col = agent_1)) +
   geom_line(data = curves, aes(x, y)) +
   scale_x_log10() + scale_y_log10() + facet_grid(payoff_type ~ num_actions) + 
   labs(x = 'log number of turns (T)', y = 'maximum log total regret', col = 'policy',
-       title = 'Constant-Sum Game Results - analysis of maximum regret')
+       title = 'Constant-Sum Game Results') +
+  theme_bw()
+
+ggsave(paste0(folder, 'images/game theory/num_turns_by_regret.png'), 
+       width = 10, height = 5)
 
 ########################################################################
 

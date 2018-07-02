@@ -1,5 +1,7 @@
 
 import pickle
+from numpy import mean
+import pandas as pd
 
 class Individual:
     def __init__(self, loss_matrix, agent):
@@ -84,3 +86,18 @@ def load(path = '../data/evolutionary/populations.pickle'):
 
 populations = load()
 
+results = []
+
+for population in populations:
+    agent_type = population.agent.type()
+    num_turns = population.num_turns
+    num_actions = population.num_actions
+    for individual in population.members:
+        regret = individual.fitness()
+        results.append([agent_type, num_turns, num_actions, regret])
+
+results_df = pd.DataFrame(results, columns = ['agent_type', 'num_turns', 'num_actions', 'regret'])
+
+results_df.shape
+
+results_df.to_csv('../data/evolutionary/testing_all_agents_results.csv', index = False)

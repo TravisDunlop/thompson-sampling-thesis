@@ -27,7 +27,7 @@ class Individual:
         self.agent = agent
         self.regret_estimates = []
 
-    def test_fitness(self, times = 2):
+    def test_fitness(self, times = 10):
         for _ in range(times):
             regret_estimate = estimate_regret(self.loss_matrix, self.agent)
             self.regret_estimates.append(regret_estimate)
@@ -109,8 +109,8 @@ def load(path = '../data/evolutionary/populations.pickle'):
 #other hyperparameters
 num_individuals = 100
 noise_sd = 0.05
-dropouts = [1, 0.25]
-percent_to_kill = 2/3
+dropouts = [0.25]
+percent_to_kill = 1/2
 
 agents = [ThompsonSamplingAgent(), FPLDropout(), ExponentialWeightedAverage()]
 actions_range = range(2, 30, 4)

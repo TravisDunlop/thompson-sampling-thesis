@@ -5,6 +5,8 @@
 \usepackage[nochapters]{classicthesis} % nochapters
 \usepackage{amsmath}
 \usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{dsfont}
 
 % for algorithm description
 \usepackage{alltt}
@@ -17,13 +19,13 @@
 	\pagestyle{plain}
 	\title{\rmfamily\normalfont Thompson Sampling \\in Adversarial Environments}
 	\author{Travis Dunlop }
-	\date{July 1, 2018\\ $\,$ 
+	\date{July 3, 2018\\ $\,$ 
 			 \\Advisors: Gergely Neu, Mihalis Markakis} 
 	
 	\maketitle
 	
 	\begin{abstract}
-		Thompson Sampling is an increasingly popular family of algorithms for decision making in online optimization.  And, this is for good reason.  If the loss of each action is independent and identically distributed, the external regret is bounded by $\mathcal{O}()$ (where $N$ is the number of actions and $T$ total time steps) \cite{agrawal}. This rivals the performance of state-of-the art algorithms.  However, what is not yet understood is it's performance if the losses are not iid.  In this thesis, we provide empirical evidence that Thompson Sampling performs about as well as algorithms with tight regret bounds in adversarial environments.  This evidence comes from constant sum game play as well as evolutionary strategies.
+		Thompson Sampling is an increasingly popular family of algorithms for decision making in online optimization.  And, this is for good reason.  If the loss of each action is independent and identically distributed, the external regret is bounded by $\mathcal{O}(\ln T)$ (where $T$ is total time steps) \cite{agrawal}. This rivals the performance of state-of-the art algorithms.  However, what is not yet understood is it's performance if the losses are not iid.  In this thesis, we provide empirical evidence that Thompson Sampling performs about as well as algorithms with tight regret bounds in adversarial environments.  This evidence comes from constant sum game play as well as evolutionary strategies.
 	\end{abstract}
 	
 	\section{Introduction}
@@ -99,6 +101,7 @@
 
 	For a more thorough treatment of Beta-Bernoulli Thompson Sampling, please refer to \cite{agrawal}
 	
+	
 	\section{Other Algorithms}
 	
 	Of course, Thompson Sampling is not the only algorithm that could be used in this 'prediction with expert advice' framework.  In this section we discuss two of the more popular strategies.  Both of them have provable bounds on adversarial regret.
@@ -148,15 +151,71 @@
 		\label{tab:multicol}
 	\end{table}
 
-	\section{Game Theory}
-	
-	There are deep underlying ties between analyzing regret in 'prediction with expert advice' scenerios and game theory.  In this section, we highlight some of those ties as theoretical foundation before stating our empirical results.  
-	
 
+
+	\section{Constant Sum Games}
+	
+	In order to come up with ways to generate adversarial data, we now turn to game theory - specificially, constant sum games.  In this setup, there are two players: the row player and the column player.  Here we are talking about the rows and columns of a payoff matrix $P \in \mathds{R}^{N \times N}$.  At each round the row player chooses a row $i \in \{1, ..., N\}$ and the column player chooses a column $j \in \{1, ..., N\}$.  The row player incurrs a loss $P_{i, j}$ while the column player loses $c - P_{i, j}$.  Since we want to keep losses for both players bounded on the range $\left[ 0, 1 \right] $ we will say $P \in \left[ 0, 1 \right] ^{N \times N}$ and $c = 1$.
+		
+	In the figure on the next page we visualize the outcomes of many repeated trials.  Each column of the plots show a different value of $N$.  The rows are payoff matrices.  We consider three types: 
+	\begin{itemize}
+		\item identity - in this setup, the row player wants to choose the same action as the column player.  The column player wants the opposite.  Here is an example matrix:
+		$$
+		\begin{bmatrix}
+			1  &  0 & 0     \\
+			0  &  1 & 0     \\
+			0  &  0 & 1     \\
+		\end{bmatrix}
+		$$
+		\item rock paper scissors - In the three by three case this is exactly the game of rock paper scissors.  Each row or column refers one of the three actions.  Paper beats rock, rock beats scissors, scissors beats paper.  Note here the losses are rescaled to be between zero and one.
+		$$
+		\begin{bmatrix}
+			0.5  &  0 & 1     \\
+			1  &  0.5 & 0     \\
+			0  &  1  & 0.5    \\
+		\end{bmatrix}
+		$$
+		\item uniform - In this setup, each entry of the payoff matrix is generated uniformly at random.
+	\end{itemize}
+	We compare three algorithms: 
+	\begin{itemize}
+		\item Beta-Bernoulli Thompson Sampling
+		\item Exponential weighted averaging (EWA) - with learning rate $\eta_t = \sqrt{8 (\ln{N})/t}$
+		\item Follow the perturbed leader (FPL) with dropout perturbations -  we say $\widetilde{\ell}_{i, t} = 1$ with probability $(1 - \alpha) \ell_{i, t}$ where $\alpha \in (0, 1)$.  Decisions are made by choosing the lowest cummulative loss of $\widetilde{\ell}_{i, t}$
+	\end{itemize},  and 
+
+	For each combination of $N, T$, payoff matrix and algorithm we play 100 rounds of the game.  The point plotted is the maximum regret of the row player found in those trials.
+	
+	\begin{figure}[h!]
+		\makebox[\textwidth][c]{
+			\includegraphics[width=1.5\textwidth]{../images/game_theory/num_turns_by_regret}
+		}
+	\end{figure}
+
+\pagebreak
+
+There are some nice underlying connections between analyzing regret in 'prediction with expert advice' scenerios and game theory.    << Flesh this out more >>
+
+	
+	\pagebreak
+	
 	\section{Evolutionary Strategies}	
 	
-	In our quest for testing the limits of Thompson Sampling we now turn to the 
+	In our quest for testing the limits of Thompson Sampling we now view our situation as an optimization problem which we explore with evolutionary strategies.  Recall the optimization problem we are trying to solve is $ \max_\ell E [R_T] $ where $\ell \in \left[ 0, 1 \right]^{N \times T} $.  Now, we play the role of adversary trying to maximize the forecaster's regret.  Since there is not a known closed form solution, we get creative and resort to evolutionary methods.
+		
+	These methods were inspired by Darwinian evolution and so the language is also quite biological.  An individual in this case is a possible loss matrix $\ell \in \left[ 0, 1 \right]^{N \times T} $.  We initialize a population of 100 by sampling this space uniformly at random.  We then estimate the regret by running the learning algorithm (i.e. Thompson Sampling) against this loss matrix twice.  Then we select only the top third to repopulate.  The others are discarded.  The individuals left have two children each generated by perturbing the loss matrix with Gaussian noise of variance $0.025$.  For one of the children, every entry is perturbed. For the other, only a quarter of the entries are perturbed.  For each generation, we test the fitness by estimating regret, sort the individuals by average regret, remove the two thirds of the population with low regret estimates, generate two children each for the remaining individuals.  We repeated this procedure about two thousand times.  A separate population is maintained for different values of $N, T$ and the different algorithms we test.
+		
+	Below we vizualize the results of these tests.  Each point represents an individual.  The maximum points of each population is bold.  The line represents $R = a \sqrt{T}$ where $a$ is a constant chosen such that the curve is greater than or equal to all trials 
 	
+		
+	\begin{figure}[h!]
+		\makebox[\textwidth][c]{
+		\includegraphics[width=1.5\textwidth]{../images/evolutionary/num_turns_by_regret}
+	}
+	\end{figure}
+
+	In this setup Thompson Sampling consistently performs better than either of the other two algorithms.
+
 	\section{Related Work}
 	
 	There are a few results in this domain worth mentioning.  The first of which is a paper by Gopalan from 2013 where he shows that Thompson Sampling with Gaussian prior and liklihood is exactly equivalent to Follow the Perturbed Leader with Gaussian perturbations \cite{FPL_TS_Gaussian}.  Thus, the regret bound on the FPL strategy can be transfered to Thompson Sampling.  In retrospect, is quite an intuitive result.  In Thompson Sampling the uncertainty is expressed as a posterior distribution. For FPL, it's a perturbation.  When they both have the same distribution, they are equivalent. 	An area of future exploration is if there are other similar connections to FPL when the priors have different distributions.
@@ -164,6 +223,8 @@
 	Another mention of our problem is Russo et al.'s recent tutorial on Thompson Sampling \cite{Russo_TS}.  They discuss the case when losses are generated from a Bernoulli distribution whose parameter drifts with time.  They propose an alteration to the original Thompson Sampling where greater weight is given to data more recently seen.  This, however, is not the full adversarial framework we are after.
 
 	\section{Conclusion}
+	
+	In this thesis we have provided empirical evidence that Thompson Sampling is robust in adversarial settings.  We compared it's performance with two provably robust algorithms: follow the perturbed leader and exponential weighted averaging in constant sum games and an evolutionary setting.  Thompson Sampling performed just as well, and sometimes better than these two algorithms.  Looking forward, hopefully this evidence will inspire a mathematical proof of an external regret bound.
 	
 	All of the code used in this thesis can be found at \url{github.com/TravisDunlop/thompson-sampling-thesis}
 	
