@@ -153,8 +153,8 @@
 
 	\section{Generating Loss Sequences}
 	
-	Now, we get to the main contribution of the thesis: novel ways of generating adversarial loss sequences.  This involves a change of perspective from the forecaster to the environment.  We are the adversary trying to maximize the regret of a Thompson Sampling policy.  Our goal here is to find a loss sequence $\ell in \left[ 0, 1 \right] ^{N \times T}$ such that expected regret is maximized:  $\max_\ell E[R_T]$
-	
+	Now, we get to the main contribution of the thesis: novel ways of generating adversarial loss sequences.  This involves a change of perspective from the forecaster to the environment.  We are the adversary trying to maximize the regret of a Thompson Sampling policy.  Our goal here is to find a loss sequence $\ell \in \left[ 0, 1 \right] ^{N \times T}$ such that expected regret is maximized:  $\max_\ell E[R_T]$.  For any values of $N$ and $T$ larger than tiny - doing any direct search is computationally impossible.  We need to get creative to see meaningful empirical results.
+		
 	\subsection{Constant Sum Games}
 	
 	In order to come up with ways to generate adversarial data, we now turn to game theory - specificially, constant sum games.  In this setup, there are two players: the row player and the column player.  Here we are talking about the rows and columns of a payoff matrix $P \in \mathds{R}^{N \times N}$.  At each round the row player chooses a row $i \in \{1, ..., N\}$ and the column player chooses a column $j \in \{1, ..., N\}$.  The row player incurrs a loss $P_{i, j}$ while the column player loses $c - P_{i, j}$.  Since we want to keep losses for both players bounded on the range $\left[ 0, 1 \right] $ we will say $P \in \left[ 0, 1 \right] ^{N \times N}$ and $c = 1$.
