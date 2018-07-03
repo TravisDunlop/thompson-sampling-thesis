@@ -151,9 +151,11 @@
 		\label{tab:multicol}
 	\end{table}
 
-
-
-	\section{Constant Sum Games}
+	\section{Generating Loss Sequences}
+	
+	Now, we get to the main contribution of the thesis: novel ways of generating adversarial loss sequences.  This involves a change of perspective from the forecaster to the environment.  We are the adversary trying to maximize the regret of a Thompson Sampling policy.  Our goal here is to find a loss sequence $\ell in \left[ 0, 1 \right] ^{N \times T}$ such that expected regret is maximized:  $\max_\ell E[R_T]$
+	
+	\subsection{Constant Sum Games}
 	
 	In order to come up with ways to generate adversarial data, we now turn to game theory - specificially, constant sum games.  In this setup, there are two players: the row player and the column player.  Here we are talking about the rows and columns of a payoff matrix $P \in \mathds{R}^{N \times N}$.  At each round the row player chooses a row $i \in \{1, ..., N\}$ and the column player chooses a column $j \in \{1, ..., N\}$.  The row player incurrs a loss $P_{i, j}$ while the column player loses $c - P_{i, j}$.  Since we want to keep losses for both players bounded on the range $\left[ 0, 1 \right] $ we will say $P \in \left[ 0, 1 \right] ^{N \times N}$ and $c = 1$.
 		
@@ -185,8 +187,6 @@
 	\end{itemize}
 
 	For each combination of $N, T$, payoff matrix and algorithm we play 100 rounds of the game.  The point plotted is the maximum regret of the row player found in those trials.
-	
-	\pagebreak
 
 	The curves in the plot below are of the form $R_T = a \sqrt{T}$ where $a$ is a constant chosen such that the curve is greater than or equal to all values of regret for that plot and algorithm.  This is to visually compare whether or not the behavior of the maximum regret seen is actually follows this pattern. If the game provides a strong enough of an adversary, $R_T \propto \sqrt{T}$ is the relationship we expect for EWA and FPL given their regret bounds.  Note that since both axes are logarithmic, the line is straight. 
 	
@@ -196,14 +196,19 @@
 
 	\begin{figure}[h!]
 	\makebox[\textwidth][c]{
-		\includegraphics[width=1.5\textwidth]{../images/game_theory/num_turns_by_regret}
+	\includegraphics[width=\textwidth]{../images/game_theory/column_player_Thompson_Sampling}
+	}
+
+	\makebox[\textwidth][c]{
+		\includegraphics[width=0.7\textwidth]{../images/game_theory/column_player_EWA}
+		\includegraphics[width=0.7\textwidth]{../images/game_theory/column_player_FPL_Dropout}
 	}
 	\end{figure}
 
 	
 	\pagebreak
 	
-	\section{Evolutionary Strategies}	
+	\subsection{Evolutionary Strategies}	
 	
 	In our quest for testing the limits of Thompson Sampling we now view our situation as an optimization problem which we explore with evolutionary strategies.  Recall the optimization problem we are trying to solve is $ \max_\ell E [R_T] $ where $\ell \in \left[ 0, 1 \right]^{N \times T} $.  Now, we play the role of adversary trying to maximize the forecaster's regret.  Since there is not a known closed form solution, we get creative and resort to evolutionary methods.
 		
